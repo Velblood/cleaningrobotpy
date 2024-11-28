@@ -35,6 +35,8 @@ class CleaningRobot:
     E = 'E'
     W = 'W'
 
+    VALID_HEADINGS = [N, S, E, W]
+
     LEFT = 'l'
     RIGHT = 'r'
     FORWARD = 'f'
@@ -65,12 +67,14 @@ class CleaningRobot:
         self.cleaning_system_on = False
 
     def initialize_robot(self) -> None:
-        # To be implemented
-        pass
+        self.pos_x = 0
+        self.pos_y = 0
+        self.heading = self.N
 
     def robot_status(self) -> str:
-        # To be implemented
-        pass
+        if self.heading not in self.VALID_HEADINGS:
+            raise CleaningRobotError
+        return f'({self.pos_x},{self.pos_y},{self.heading})'
 
     def execute_command(self, command: str) -> str:
         # To be implemented

@@ -26,14 +26,14 @@ class TestCleaningRobot(TestCase):
         cr.heading = "N"
         cr.pos_x = 0
         cr.pos_y = 0
-        self.assertEqual("0,0,N", cr.robot_status(), "Status was not written properly")
+        self.assertEqual("(0,0,N)", cr.robot_status(), "Status was not written properly")
 
     def test_current_status_second_option(self):
         cr = CleaningRobot()
         cr.heading = "S"
         cr.pos_x = 2
         cr.pos_y = 2
-        self.assertEqual("2,2,S", cr.robot_status(), "Status was not written properly")
+        self.assertEqual("(2,2,S)", cr.robot_status(), "Status was not written properly")
 
     def test_current_status_invalid_option(self):
         cr = CleaningRobot()
