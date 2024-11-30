@@ -65,3 +65,31 @@ class TestCleaningRobot(TestCase):
                                       call(cr.RECHARGE_LED_PIN, True)])
         self.assertFalse(cr.cleaning_system_on)
         self.assertTrue(cr.recharge_led_on)
+
+    def test_execute_command_invalid_option(self):
+        cr = CleaningRobot()
+        self.assertRaises(CleaningRobotError, cr.execute_command, "j")
+
+    def test_execute_command_forward(self):
+        cr = CleaningRobot()
+        cr.heading = "N"
+        cr.pos_x = 0
+        cr.pos_y = 0
+        cr.execute_command("f")
+        self.assertEqual("(0,1,N)", cr.robot_status())
+
+    def test_execute_command_right(self):
+        cr = CleaningRobot()
+        cr.heading = "N"
+        cr.pos_x = 0
+        cr.pos_y = 0
+        cr.execute_command("r")
+        self.assertEqual("(0,0,E)", cr.robot_status())
+
+    def test_execute_command_left(self):
+        cr = CleaningRobot()
+        cr.heading = "N"
+        cr.pos_x = 1
+        cr.pos_y = 0
+        cr.execute_command("l")
+        self.assertEqual("(1,0,W)", cr.robot_status())
