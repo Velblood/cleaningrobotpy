@@ -1,11 +1,13 @@
 from unittest import TestCase
+from unittest.mock import Mock, patch, call
 
+from mock import GPIO
+from mock.ibs import IBS
 from src.cleaning_robot import CleaningRobot, CleaningRobotError
 
 
 class TestCleaningRobot(TestCase):
 
-    # @patch.object(GPIO, "input")
     def test_position_x_after_initialize(self):
         cr = CleaningRobot()
         cr.initialize_robot()
@@ -41,3 +43,25 @@ class TestCleaningRobot(TestCase):
         cr.pos_x = 2
         cr.pos_y = 2
         self.assertRaises(CleaningRobotError, cr.robot_status)
+
+    @patch.object(GPIO, "output")
+    @patch.object(IBS, "get_charge_left")
+    def test_manage_cleaning_system_enough_battery(self, mock_ibs: Mock, mock_output: Mock):
+        mock_ibs.return_value = 11
+        cr = CleaningRobot()
+        cr.manage_cleaning_system()
+        mock_output.assert_has_calls([call(cr.CLEANING_SYSTEM_PIN, True),
+                                      call(cr.RECHARGE_LED_PIN, False)])
+        self.assertTrue(cr.cleaning_system_on)
+        self.assertFalse(cr.recharge_led_on)
+
+    @patch.object(GPIO, "output")
+    @patch.object(IBS, "get_charge_left")
+    def test_manage_cleaning_system_not_enough_battery(self, mock_ibs: Mock, mock_output: Mock):
+        mock_ibs.return_value = 10
+        cr = CleaningRobot()
+        cr.manage_cleaning_system()
+        mock_output.assert_has_calls([call(cr.CLEANING_SYSTEM_PIN, False),
+                                      call(cr.RECHARGE_LED_PIN, True)])
+        self.assertFalse(cr.cleaning_system_on)
+        self.assertTrue(cr.recharge_led_on)
