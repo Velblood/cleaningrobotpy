@@ -35,11 +35,13 @@ class CleaningRobot:
     E = 'E'
     W = 'W'
 
-    VALID_HEADINGS = [N, S, E, W]
+    VALID_HEADINGS = [N, E, S, W]
 
     LEFT = 'l'
     RIGHT = 'r'
     FORWARD = 'f'
+
+    VALID_COMMANDS = [LEFT, RIGHT, FORWARD]
 
     def __init__(self):
         GPIO.setmode(GPIO.BOARD)
@@ -77,8 +79,26 @@ class CleaningRobot:
         return f'({self.pos_x},{self.pos_y},{self.heading})'
 
     def execute_command(self, command: str) -> str:
-        # To be implemented
-        pass
+        if command not in self.VALID_COMMANDS:
+            raise CleaningRobotError
+        if command == self.FORWARD:
+            self.activate_wheel_motor()
+            if self.heading == 'N':
+                self.pos_y += 1
+            elif self.heading == 'S':
+                self.pos_y -= 1
+            elif self.heading == 'E':
+                self.pos_x += 1
+            else:
+                self.pos_x -= 1
+        else:
+            self.activate_rotation_motor(command)
+            index = self.VALID_HEADINGS.index(self.heading)
+            if command == self.LEFT:
+                self.heading = self.VALID_HEADINGS[(index - 1) % len(self.VALID_HEADINGS)]
+            elif command == self.RIGHT:
+                self.heading = self.VALID_HEADINGS[(index + 1) % len(self.VALID_HEADINGS)]
+        return self.robot_status()
 
     def obstacle_found(self) -> bool:
         # To be implemented
