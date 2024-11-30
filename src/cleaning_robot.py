@@ -6,6 +6,7 @@ try:
     import RPi.GPIO as GPIO
     import board
     import IBS
+
     DEPLOYMENT = True
 except:
     import mock.GPIO as GPIO
@@ -14,7 +15,6 @@ except:
 
 
 class CleaningRobot:
-
     RECHARGE_LED_PIN = 12
     CLEANING_SYSTEM_PIN = 13
     INFRARED_PIN = 15
@@ -85,8 +85,20 @@ class CleaningRobot:
         pass
 
     def manage_cleaning_system(self) -> None:
-        # To be implemented
-        pass
+        battery = self.ibs.get_charge_left()
+        if battery <= 10:
+            GPIO.output(self.CLEANING_SYSTEM_PIN, False)
+            self.cleaning_system_on = False
+
+            GPIO.output(self.RECHARGE_LED_PIN, True)
+            self.recharge_led_on = True
+            return
+
+        GPIO.output(self.CLEANING_SYSTEM_PIN, True)
+        self.cleaning_system_on = True
+
+        GPIO.output(self.RECHARGE_LED_PIN, False)
+        self.recharge_led_on = False
 
     def activate_wheel_motor(self) -> None:
         """
@@ -100,8 +112,8 @@ class CleaningRobot:
         # Disable STBY
         GPIO.output(self.STBY, GPIO.HIGH)
 
-        if DEPLOYMENT: # Sleep only if you are deploying on the actual hardware
-            time.sleep(1) # Wait for the motor to actually move
+        if DEPLOYMENT:  # Sleep only if you are deploying on the actual hardware
+            time.sleep(1)  # Wait for the motor to actually move
 
         # Stop the motor
         GPIO.output(self.AIN1, GPIO.LOW)
