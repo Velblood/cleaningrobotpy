@@ -93,3 +93,35 @@ class TestCleaningRobot(TestCase):
         cr.pos_y = 0
         cr.execute_command("l")
         self.assertEqual("(1,0,W)", cr.robot_status())
+
+    @patch.object(GPIO, "input")
+    def test_obstacle_found(self, mock_infrared_sensor: Mock):
+        mock_infrared_sensor.return_value = True
+        cr = CleaningRobot()
+        self.assertTrue(cr.obstacle_found())
+
+    @patch.object(GPIO, "input")
+    def test_obstacle_was_not_found(self, mock_infrared_sensor: Mock):
+        mock_infrared_sensor.return_value = False
+        cr = CleaningRobot()
+        self.assertFalse(cr.obstacle_found())
+
+    @patch.object(GPIO, "input")
+    def test_obstacle_in_front_of_robot(self, mock_infrared_sensor: Mock):
+        mock_infrared_sensor.return_value = True
+        cr = CleaningRobot()
+        cr.heading = "N"
+        cr.pos_x = 0
+        cr.pos_y = 0
+        cr.execute_command("f")
+        self.assertEqual("(0,0,N)(0,1)", cr.robot_status())
+
+    @patch.object(GPIO, "input")
+    def test_no_obstacle_in_front_of_robot(self, mock_infrared_sensor: Mock):
+        mock_infrared_sensor.return_value = False
+        cr = CleaningRobot()
+        cr.heading = "N"
+        cr.pos_x = 0
+        cr.pos_y = 0
+        cr.execute_command("f")
+        self.assertEqual("(0,1,N)", cr.robot_status())
