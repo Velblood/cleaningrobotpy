@@ -75,24 +75,21 @@ class TestCleaningRobot(TestCase):
         cr.heading = "N"
         cr.pos_x = 0
         cr.pos_y = 0
-        cr.execute_command("f")
-        self.assertEqual("(0,1,N)", cr.robot_status())
+        self.assertEqual("(0,1,N)", cr.execute_command("f"))
 
     def test_execute_command_right(self):
         cr = CleaningRobot()
         cr.heading = "N"
         cr.pos_x = 0
         cr.pos_y = 0
-        cr.execute_command("r")
-        self.assertEqual("(0,0,E)", cr.robot_status())
+        self.assertEqual("(0,0,E)", cr.execute_command("r"))
 
     def test_execute_command_left(self):
         cr = CleaningRobot()
         cr.heading = "N"
         cr.pos_x = 1
         cr.pos_y = 0
-        cr.execute_command("l")
-        self.assertEqual("(1,0,W)", cr.robot_status())
+        self.assertEqual("(1,0,W)", cr.execute_command("l"))
 
     @patch.object(GPIO, "input")
     def test_obstacle_found(self, mock_infrared_sensor: Mock):
@@ -113,8 +110,7 @@ class TestCleaningRobot(TestCase):
         cr.heading = "N"
         cr.pos_x = 0
         cr.pos_y = 0
-        cr.execute_command("f")
-        self.assertEqual("(0,0,N)(0,1)", cr.robot_status())
+        self.assertEqual("(0,0,N)(0,1)", cr.execute_command("f"))
 
     @patch.object(GPIO, "input")
     def test_no_obstacle_in_front_of_robot(self, mock_infrared_sensor: Mock):
@@ -123,5 +119,4 @@ class TestCleaningRobot(TestCase):
         cr.heading = "N"
         cr.pos_x = 0
         cr.pos_y = 0
-        cr.execute_command("f")
-        self.assertEqual("(0,1,N)", cr.robot_status())
+        self.assertEqual("(0,1,N)", cr.execute_command("f"))
