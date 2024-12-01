@@ -120,3 +120,12 @@ class TestCleaningRobot(TestCase):
         cr.pos_x = 0
         cr.pos_y = 0
         self.assertEqual("(0,1,N)", cr.execute_command("f"))
+
+    @patch.object(IBS, "get_charge_left")
+    def test_manage_cleaning_system_not_enough_battery(self, mock_ibs: Mock):
+        mock_ibs.return_value = 10
+        cr = CleaningRobot()
+        cr.heading = "E"
+        cr.pos_x = 1
+        cr.pos_y = 1
+        self.assertEqual("!(1,1,E)", cr.execute_command("f"))
