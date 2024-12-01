@@ -70,21 +70,27 @@ class TestCleaningRobot(TestCase):
         cr = CleaningRobot()
         self.assertRaises(CleaningRobotError, cr.execute_command, "j")
 
-    def test_execute_command_forward(self):
+    @patch.object(IBS, "get_charge_left")
+    def test_execute_command_forward(self, mock_ibs: Mock):
+        mock_ibs.return_value = 11
         cr = CleaningRobot()
         cr.heading = "N"
         cr.pos_x = 0
         cr.pos_y = 0
         self.assertEqual("(0,1,N)", cr.execute_command("f"))
 
-    def test_execute_command_right(self):
+    @patch.object(IBS, "get_charge_left")
+    def test_execute_command_right(self, mock_ibs: Mock):
+        mock_ibs.return_value = 100
         cr = CleaningRobot()
         cr.heading = "N"
         cr.pos_x = 0
         cr.pos_y = 0
         self.assertEqual("(0,0,E)", cr.execute_command("r"))
 
-    def test_execute_command_left(self):
+    @patch.object(IBS, "get_charge_left")
+    def test_execute_command_left(self, mock_ibs: Mock):
+        mock_ibs.return_value = 50
         cr = CleaningRobot()
         cr.heading = "N"
         cr.pos_x = 1
@@ -103,17 +109,21 @@ class TestCleaningRobot(TestCase):
         cr = CleaningRobot()
         self.assertFalse(cr.obstacle_found())
 
+    @patch.object(IBS, "get_charge_left")
     @patch.object(GPIO, "input")
-    def test_obstacle_in_front_of_robot(self, mock_infrared_sensor: Mock):
+    def test_obstacle_in_front_of_robot(self, mock_infrared_sensor: Mock, mock_ibs: Mock):
         mock_infrared_sensor.return_value = True
+        mock_ibs.return_value = 20
         cr = CleaningRobot()
         cr.heading = "N"
         cr.pos_x = 0
         cr.pos_y = 0
         self.assertEqual("(0,0,N)(0,1)", cr.execute_command("f"))
 
+    @patch.object(IBS, "get_charge_left")
     @patch.object(GPIO, "input")
-    def test_no_obstacle_in_front_of_robot(self, mock_infrared_sensor: Mock):
+    def test_no_obstacle_in_front_of_robot(self, mock_infrared_sensor: Mock, mock_ibs: Mock):
+        mock_ibs.return_value = 11
         mock_infrared_sensor.return_value = False
         cr = CleaningRobot()
         cr.heading = "N"
@@ -122,7 +132,7 @@ class TestCleaningRobot(TestCase):
         self.assertEqual("(0,1,N)", cr.execute_command("f"))
 
     @patch.object(IBS, "get_charge_left")
-    def test_manage_cleaning_system_not_enough_battery(self, mock_ibs: Mock):
+    def test_execute_command_not_enough_battery(self, mock_ibs: Mock):
         mock_ibs.return_value = 10
         cr = CleaningRobot()
         cr.heading = "E"

@@ -82,6 +82,10 @@ class CleaningRobot:
         if command not in self.VALID_COMMANDS:
             raise CleaningRobotError("Invalid command received.")
 
+        battery = self.ibs.get_charge_left()
+        if battery <= 10:
+            return f'!{self.robot_status()}'
+
         suffix = ""
         if command == self.FORWARD:
             self.activate_wheel_motor()
