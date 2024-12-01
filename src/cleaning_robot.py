@@ -75,38 +75,37 @@ class CleaningRobot:
 
     def robot_status(self) -> str:
         if self.heading not in self.VALID_HEADINGS:
-            raise CleaningRobotError
+            raise CleaningRobotError("Invalid heading.")
         return f'({self.pos_x},{self.pos_y},{self.heading})'
 
     def execute_command(self, command: str) -> str:
         if command not in self.VALID_COMMANDS:
-            raise CleaningRobotError
+            raise CleaningRobotError("Invalid command received.")
+
         suffix = ""
         if command == self.FORWARD:
             self.activate_wheel_motor()
-            y_change = 0
-            x_change = 0
-            if self.heading == 'N':
-                y_change = 1
-            elif self.heading == 'S':
-                y_change = -1
-            elif self.heading == 'E':
-                x_change = 1
-            else:
-                x_change = -1
+            dx, dy = 0, 0
+            if self.heading == self.N:
+                dy = 1
+            elif self.heading == self.S:
+                dy = -1
+            elif self.heading == self.E:
+                dx = 1
+            elif self.heading == self.W:
+                dx = -1
 
             if self.obstacle_found():
-                suffix = f'({self.pos_x + x_change},{self.pos_y + y_change})'
+                suffix = f"({self.pos_x + dx},{self.pos_y + dy})"
             else:
-                self.pos_x += x_change
-                self.pos_y += y_change
+                self.pos_x += dx
+                self.pos_y += dy
         else:
             self.activate_rotation_motor(command)
             index = self.VALID_HEADINGS.index(self.heading)
-            if command == self.LEFT:
-                self.heading = self.VALID_HEADINGS[(index - 1) % len(self.VALID_HEADINGS)]
-            elif command == self.RIGHT:
-                self.heading = self.VALID_HEADINGS[(index + 1) % len(self.VALID_HEADINGS)]
+            self.heading = self.VALID_HEADINGS[
+                (index - 1 if command == self.LEFT else index + 1) % len(self.VALID_HEADINGS)]
+
         return self.robot_status() + suffix
 
     def obstacle_found(self) -> bool:
