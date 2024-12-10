@@ -139,3 +139,12 @@ class TestCleaningRobot(TestCase):
         cr.pos_x = 1
         cr.pos_y = 1
         self.assertEqual("!(1,1,E)", cr.execute_command("f"))
+
+    def test_set_borders(self):
+        cr = CleaningRobot()
+        self.assertEqual(cr.set_borders(0, 5, 0, 5), "B(0, 5, 0, 5)", "Borders were not set")
+
+    def test_get_borders(self):
+        cr = CleaningRobot()
+        cr.set_borders(0, 5, 0, 5)
+        self.assertEqual(cr.get_borders(), "B(0, 5, 0, 5)", "Borders were not got correctly")
