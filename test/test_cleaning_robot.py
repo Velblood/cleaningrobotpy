@@ -160,7 +160,7 @@ class TestCleaningRobot(TestCase):
         cr.pos_y = 3
         cr.heading = "N"
 
-        self.assertEqual(cr.robot_status, "O(10,3,N)", "Status was not returned properly")
+        self.assertEqual(cr.robot_status(), "O(10,3,N)", "Status was not returned properly")
         warning_led.assert_called_with(11, True)
         self.assertTrue(cr.warning_led_on, "Warning LED should be on when out of borders")
 
