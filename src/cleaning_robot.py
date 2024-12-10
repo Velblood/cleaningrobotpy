@@ -98,6 +98,10 @@ class CleaningRobot:
         if battery <= 10:
             return f'!{self.robot_status()}'
 
+        position = self.robot_status()
+        if 'O' in position:
+            return position
+
         suffix = ""
         if command == self.FORWARD:
             self.activate_wheel_motor()
