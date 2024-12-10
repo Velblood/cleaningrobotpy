@@ -68,6 +68,8 @@ class CleaningRobot:
         self.recharge_led_on = False
         self.cleaning_system_on = False
 
+        self.borders = [0, 9, 0, 9]
+
     def initialize_robot(self) -> None:
         self.pos_x = 0
         self.pos_y = 0
@@ -175,6 +177,16 @@ class CleaningRobot:
         GPIO.output(self.BIN2, GPIO.LOW)
         GPIO.output(self.PWMB, GPIO.LOW)
         GPIO.output(self.STBY, GPIO.LOW)
+
+    def get_borders(self) -> str:
+        return f'B({self.borders[0]},{self.borders[1]},{self.borders[2]},{self.borders[3]})'
+
+    def set_borders(self, x_min: int, x_max: int, y_min: int, y_max: int) -> str:
+        self.borders[0] = x_min
+        self.borders[1] = x_max
+        self.borders[2] = y_min
+        self.borders[3] = y_max
+        return self.get_borders()
 
 
 class CleaningRobotError(Exception):
