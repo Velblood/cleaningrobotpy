@@ -174,3 +174,12 @@ class TestCleaningRobot(TestCase):
         self.assertEqual(cr.robot_status(), "(9,9,N)", "Status was not returned properly")
         warning_led.assert_called_with(11, False)
         self.assertFalse(cr.warning_led_on, "Warning LED should be off when within borders")
+
+    @patch.object(IBS, "get_charge_left")
+    def test_execute_command_out_of_borders(self, mock_ibs: Mock):
+        mock_ibs.return_value = 11
+        cr = CleaningRobot()
+        cr.pos_x = 10
+        cr.pos_y = 1
+        cr.heading = "N"
+        self.assertEqual(cr.execute_command("f"), "O(10,1,N)", "Status was not returned properly")
