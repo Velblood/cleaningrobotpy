@@ -15,6 +15,7 @@ except:
 
 
 class CleaningRobot:
+    WARNING_LED_PIN = 11
     RECHARGE_LED_PIN = 12
     CLEANING_SYSTEM_PIN = 13
     INFRARED_PIN = 15
@@ -67,6 +68,7 @@ class CleaningRobot:
 
         self.recharge_led_on = False
         self.cleaning_system_on = False
+        self.warning_led_on = False
 
         self.borders = [0, 9, 0, 9]
 
@@ -78,7 +80,15 @@ class CleaningRobot:
     def robot_status(self) -> str:
         if self.heading not in self.VALID_HEADINGS:
             raise CleaningRobotError("Invalid heading.")
-        return f'({self.pos_x},{self.pos_y},{self.heading})'
+        if self.borders[0] <= self.pos_x <= self.borders[1] and self.borders[2] <= self.pos_y <= self.borders[3]:
+            string = f'({self.pos_x},{self.pos_y},{self.heading})'
+            self.warning_led_on = False
+            GPIO.output(self.WARNING_LED_PIN, False)
+        else:
+            string = f'O({self.pos_x},{self.pos_y},{self.heading})'
+            self.warning_led_on = True
+            GPIO.output(self.WARNING_LED_PIN, True)
+        return string
 
     def execute_command(self, command: str) -> str:
         if command not in self.VALID_COMMANDS:
