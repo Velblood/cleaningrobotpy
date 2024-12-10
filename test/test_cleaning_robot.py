@@ -142,9 +142,13 @@ class TestCleaningRobot(TestCase):
 
     def test_set_borders(self):
         cr = CleaningRobot()
-        self.assertEqual(cr.set_borders(0, 5, 0, 5), "B(0, 5, 0, 5)", "Borders were not set")
+        self.assertEqual(cr.set_borders(0, 5, 0, 5), "B(0,5,0,5)", "Borders were not set")
 
     def test_get_borders(self):
         cr = CleaningRobot()
         cr.set_borders(0, 5, 0, 5)
-        self.assertEqual(cr.get_borders(), "B(0, 5, 0, 5)", "Borders were not got correctly")
+        self.assertEqual(cr.get_borders(), "B(0,5,0,5)", "Borders were not got correctly")
+
+    def test_default_borders(self):
+        cr = CleaningRobot()
+        self.assertEqual(cr.get_borders(), "B(0,9,0,9)", "Default borders were not retrieved correctly")
