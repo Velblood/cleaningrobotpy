@@ -167,10 +167,10 @@ class TestCleaningRobot(TestCase):
     @patch.object(GPIO, "output")
     def test_robot_status_within_borders(self, warning_led: Mock):
         cr = CleaningRobot()
-        cr.pos_x = 4
-        cr.pos_y = 3
+        cr.pos_x = 9
+        cr.pos_y = 9
         cr.heading = "N"
 
-        self.assertEqual(cr.robot_status(), "(4,3,N)", "Status was not returned properly")
+        self.assertEqual(cr.robot_status(), "(9,9,N)", "Status was not returned properly")
         warning_led.assert_called_with(11, False)
         self.assertFalse(cr.warning_led_on, "Warning LED should be off when within borders")
