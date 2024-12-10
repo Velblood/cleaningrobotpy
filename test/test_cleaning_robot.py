@@ -152,3 +152,25 @@ class TestCleaningRobot(TestCase):
     def test_default_borders(self):
         cr = CleaningRobot()
         self.assertEqual(cr.get_borders(), "B(0,9,0,9)", "Default borders were not retrieved correctly")
+
+    @patch.object(GPIO, "output")
+    def test_robot_status_out_of_borders(self, warning_led: Mock):
+        cr = CleaningRobot()
+        cr.pos_x = 10
+        cr.pos_y = 3
+        cr.heading = "N"
+
+        self.assertEqual(cr.robot_status, "O(10,3,N)", "Status was not returned properly")
+        warning_led.assert_called_with(11, True)
+        self.assertTrue(cr.warning_led_on, "Warning LED should be on when out of borders")
+
+    @patch.object(GPIO, "output")
+    def test_robot_status_within_borders(self, warning_led: Mock):
+        cr = CleaningRobot()
+        cr.pos_x = 4
+        cr.pos_y = 3
+        cr.heading = "N"
+
+        self.assertEqual(cr.robot_status(), "(4,3,N)", "Status was not returned properly")
+        warning_led.assert_called_with(11, False)
+        self.assertFalse(cr.warning_led_on, "Warning LED should be off when within borders")
